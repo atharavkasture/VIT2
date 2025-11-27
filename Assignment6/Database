@@ -1,0 +1,57 @@
+-- Create the database
+CREATE DATABASE IF NOT EXISTS bookstore_db;
+
+-- Use the newly created database
+USE bookstore_db;
+
+-- Create the 'users' table for registration and login
+CREATE TABLE IF NOT EXISTS users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) NOT NULL UNIQUE,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Create the 'books' table for the catalog
+CREATE TABLE IF NOT EXISTS books (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    author VARCHAR(100) NOT NULL,
+    description TEXT,
+    price DECIMAL(10, 2) NOT NULL,
+    cover_image_url VARCHAR(255)
+);
+
+-- (Optional) Insert some sample books into the catalog
+INSERT INTO books (title, author, price, cover_image_url) VALUES
+('The Alchemist', 'Paulo Coelho', 15.99, 'https://m.media-amazon.com/images/I/71aFt4+OTOL._SL1500_.jpg'),
+('To Kill a Mockingbird', 'Harper Lee', 12.50, 'https://m.media-amazon.com/images/I/81a4kCNuH+L._SL1500_.jpg'),
+('1984', 'George Orwell', 10.00, 'https://m.media-amazon.com/images/I/61ZewDE3beL._SL1500_.jpg');
+
+ALTER TABLE users
+ADD COLUMN role ENUM('customer', 'admin') NOT NULL DEFAULT 'customer';
+
+UPDATE users SET role = 'admin' WHERE email = 'kastureatharav2005@gmail.com';
+
+CREATE TABLE orders (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    total_price DECIMAL(10, 2) NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+CREATE TABLE order_items (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    order_id INT NOT NULL,
+    book_id INT NOT NULL,
+    quantity INT NOT NULL DEFAULT 1,
+    price DECIMAL(10, 2) NOT NULL,
+    FOREIGN KEY (order_id) REFERENCES orders(id),
+    FOREIGN KEY (book_id) REFERENCES books(id)
+);
+
+delete from books where id = 4;
+select * from books;
+delete from books where id = 5;
